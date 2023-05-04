@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mynotes/Views/Screens/AddNotesPage.dart';
-import 'package:mynotes/Views/Screens/EditPage.dart';
 import 'Views/Screens/HomePage.dart';
 
 void main() {
@@ -24,7 +23,6 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => HomePage(),
         '/add': (context) => AddNotes(),
-        '/edit': (context) => EditPage(),
       },
     );
   }

@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import '../Screens/EditPage.dart';
+import '../../Utils/DatabaseHelper.dart';
 
 class NotesCard extends StatefulWidget {
   const NotesCard({Key? key}) : super(key: key);
 
   @override
   State<NotesCard> createState() => _NotesCardState();
+}
+
+List AllEntries = [];
+Future _fetchdata() async {
+  AllEntries = await DatabaseHelper.instance.queryAll();
 }
 
 class _NotesCardState extends State<NotesCard> {
@@ -40,8 +47,12 @@ class _NotesCardState extends State<NotesCard> {
                                   "Delete",
                                   style: TextStyle(color: Colors.red),
                                 ),
-                                onPressed: () {
-                                  // TODO: Delete the item from DB etc..
+                                onPressed: () async {
+                                  int rowsDeleted = await DatabaseHelper
+                                      .instance
+                                      .delete(AllEntries[index + 2]["_id"]);
+                                  print(rowsDeleted);
+                                  setState(() {});
                                   Navigator.of(context).pop();
                                 },
                               ),
@@ -50,7 +61,14 @@ class _NotesCardState extends State<NotesCard> {
                         });
                     return res;
                   } else {
-                    Navigator.pushNamed(context, '/edit');
+                    Navigator.of(context).push(
+                      PageRouteBuilder(
+                        pageBuilder: (BuildContext context, animation,
+                            secondaryAnimation) {
+                          return EditPage(data: AllEntries[index]);
+                        },
+                      ),
+                    );
                   }
                 },
                 background: slideRightBackground(),
@@ -71,8 +89,8 @@ class _NotesCardState extends State<NotesCard> {
                       children: [
                         Row(
                           children: [
-                            const Text(
-                              'Title',
+                            Text(
+                              AllEntries[index]["heading"],
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
@@ -82,8 +100,8 @@ class _NotesCardState extends State<NotesCard> {
                             SizedBox(
                               width: MediaQuery.of(context).size.width - 147,
                             ),
-                            const Text(
-                              '23-12-2023',
+                            Text(
+                              AllEntries[index]["date"],
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontStyle: FontStyle.italic,
@@ -92,7 +110,9 @@ class _NotesCardState extends State<NotesCard> {
                             ),
                           ],
                         ),
-                        const Text('Description')
+                        Text(
+                          AllEntries[index]["content"],
+                        )
                       ],
                     ),
                   ),
@@ -100,7 +120,7 @@ class _NotesCardState extends State<NotesCard> {
               ),
             );
           },
-          itemCount: 3),
+          itemCount: AllEntries.length),
     );
   }
 
