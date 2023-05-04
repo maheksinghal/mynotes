@@ -44,19 +44,19 @@ class _AddNotesState extends State<AddNotes> {
                 decoration: InputDecoration(
                   hintText: "Title",
                   hintStyle: TextStyle(color: Color(0xffA4979797)),
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+                  contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12.0, vertical: 10.0),
                   filled: true,
                   fillColor: Theme.of(context).colorScheme.secondary,
                   enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    borderRadius: const BorderRadius.all(Radius.circular(5.0)),
                     borderSide: BorderSide(
                       width: 0,
                       color: Theme.of(context).colorScheme.secondary,
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    borderRadius: const BorderRadius.all(Radius.circular(5.0)),
                     borderSide: BorderSide(
                         width: 0,
                         color: Theme.of(context).colorScheme.secondary),
@@ -76,8 +76,9 @@ class _AddNotesState extends State<AddNotes> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 12.0, vertical: 5.0),
+                      horizontal: 10.0, vertical: 5.0),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         "${_selectedDate.toLocal()}"
@@ -85,9 +86,6 @@ class _AddNotesState extends State<AddNotes> {
                             .replaceAll("-", "/"),
                         style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width - 174,
                       ),
                       IconButton(
                           onPressed: () => _selectDate(context),
@@ -103,19 +101,19 @@ class _AddNotesState extends State<AddNotes> {
                 maxLines: 27,
                 decoration: InputDecoration(
                   hintText: "What's on your mind ?",
-                  hintStyle: TextStyle(color: Color(0xffA4979797)),
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+                  hintStyle: const TextStyle(color: Color(0xffA4979797)),
+                  contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12.0, vertical: 10.0),
                   filled: true,
                   fillColor: Theme.of(context).colorScheme.secondary,
                   enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    borderRadius: const BorderRadius.all(Radius.circular(5.0)),
                     borderSide: BorderSide(
                         width: 0,
                         color: Theme.of(context).colorScheme.secondary),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    borderRadius: const BorderRadius.all(Radius.circular(5.0)),
                     borderSide: BorderSide(
                         width: 0,
                         color: Theme.of(context).colorScheme.secondary),
@@ -137,7 +135,7 @@ class _AddNotesState extends State<AddNotes> {
                 ),
                 onTap: () async {
                   int i = await DatabaseHelper.instance.insert({
-                    DatabaseHelper.columnDate: _selectedDate,
+                    DatabaseHelper.columnDate: _selectedDate.toString(),
                     DatabaseHelper.columnHeading: _title,
                     DatabaseHelper.columnContent: _body
                   });
@@ -146,7 +144,7 @@ class _AddNotesState extends State<AddNotes> {
                     _title = "";
                     _body = "";
                   });
-                  Navigator.pop(context);
+                  Navigator.pop(context, true);
                 },
               ),
             ],

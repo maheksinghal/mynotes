@@ -2,36 +2,46 @@ import 'package:flutter/material.dart';
 import 'package:mynotes/Utils/DatabaseHelper.dart';
 
 class EditPage extends StatefulWidget {
-  const EditPage({Key? key, required this.data}) : super(key: key);
-  final Map data;
+  int id;
+  String title;
+  String date;
+  String note;
+  EditPage({
+    Key? key,
+    required this.id,
+    required this.date,
+    required this.title,
+    required this.note,
+  }) : super(key: key);
   @override
   State<EditPage> createState() => _EditPageState();
 }
 
 var _title = "";
 var _body = "";
+var _date = "";
 
 class _EditPageState extends State<EditPage> {
-  DateTime _selectedDate = DateTime.now();
-
   Future<void> _selectDate(BuildContext ctx) async {
     final DateTime? picked = await showDatePicker(
       context: ctx,
-      initialDate: _selectedDate,
       firstDate: DateTime(2020, 1),
       lastDate: DateTime.now(),
+      initialDate: DateTime.now(),
     );
     if (picked != null) {
       setState(() {
-        _selectedDate = picked;
+        _date = picked.toString();
       });
     }
   }
 
+  @override
   void initState() {
     super.initState();
-    _title = widget.data["heading"];
-    _body = widget.data["content"];
+    _title = widget.title;
+    _body = widget.note;
+    _date = widget.date;
   }
 
   @override
@@ -50,20 +60,20 @@ class _EditPageState extends State<EditPage> {
                 maxLines: 1,
                 decoration: InputDecoration(
                   hintText: _title,
-                  hintStyle: TextStyle(color: Color(0xffA4979797)),
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+                  hintStyle: const TextStyle(color: Color(0xffA4979797)),
+                  contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12.0, vertical: 10.0),
                   filled: true,
                   fillColor: Theme.of(context).colorScheme.secondary,
                   enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    borderRadius: const BorderRadius.all(Radius.circular(5.0)),
                     borderSide: BorderSide(
                       width: 0,
                       color: Theme.of(context).colorScheme.secondary,
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    borderRadius: const BorderRadius.all(Radius.circular(5.0)),
                     borderSide: BorderSide(
                         width: 0,
                         color: Theme.of(context).colorScheme.secondary),
@@ -85,17 +95,13 @@ class _EditPageState extends State<EditPage> {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 12.0, vertical: 5.0),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     //mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "${_selectedDate.toLocal()}"
-                            .split(' ')[0]
-                            .replaceAll("-", "/"),
+                        _date.substring(0, 10),
                         style: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width - 174,
                       ),
                       IconButton(
                           onPressed: () => _selectDate(context),
@@ -111,19 +117,19 @@ class _EditPageState extends State<EditPage> {
                 maxLines: 27,
                 decoration: InputDecoration(
                   hintText: _body,
-                  hintStyle: TextStyle(color: Color(0xffA4979797)),
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
+                  hintStyle: const TextStyle(color: Color(0xffA4979797)),
+                  contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12.0, vertical: 10.0),
                   filled: true,
                   fillColor: Theme.of(context).colorScheme.secondary,
                   enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    borderRadius: const BorderRadius.all(Radius.circular(5.0)),
                     borderSide: BorderSide(
                         width: 0,
                         color: Theme.of(context).colorScheme.secondary),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    borderRadius: const BorderRadius.all(Radius.circular(5.0)),
                     borderSide: BorderSide(
                         width: 0,
                         color: Theme.of(context).colorScheme.secondary),
@@ -144,17 +150,12 @@ class _EditPageState extends State<EditPage> {
                   child: const Text('Edit'),
                 ),
                 onTap: () async {
-                  int rowsUpdated = await DatabaseHelper.instance.update({
-                    DatabaseHelper.columnId: widget.data["_id"],
-                    DatabaseHelper.columnDate: _selectedDate,
+                  await DatabaseHelper.instance.update({
+                    DatabaseHelper.columnId: widget.id,
+                    DatabaseHelper.columnDate: _date,
                     DatabaseHelper.columnHeading: _title,
                     DatabaseHelper.columnContent: _body
-                  });
-                  print('The inserted id is $rowsUpdated');
-                  setState(() {
-                    _title = "";
-                    _body = "";
-                  });
+                  }).then((value) => {Navigator.of(context).pop(true)});
                 },
               ),
             ],
